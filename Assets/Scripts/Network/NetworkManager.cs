@@ -29,6 +29,9 @@ public enum ConsoleLevel
 
 public class NetworkManager : MonoBehaviour
 {
+    [Range(1,100)]
+    public float MAX_INTERACTION_DISTANCE = 2;
+
     [Header("Base Server Info")]
     public static NetworkManager instance;
     public GameObject playerPrefab;
@@ -65,7 +68,7 @@ public class NetworkManager : MonoBehaviour
             {
                 if(msg.eventType == Telepathy.EventType.Connected)
                 {
-                    //TODO: proper loginRegistering?
+                    connectionToAccountID.Add(msg.connectionId, -1);
                 }
                 else if(msg.eventType == Telepathy.EventType.Disconnected)
                 {
@@ -104,8 +107,14 @@ public class NetworkManager : MonoBehaviour
             case PacketType.PlayerMovementRequest:
                 return new PlayerMovementRequest();
 
-            case PacketType.PlayerSyncRequest:
-                return new PlayerSyncRequest();
+            case PacketType.GetWorldRequest:
+                return new GetWorldRequest();
+
+            case PacketType.InteractionRequest:
+                return new InteractionRequest();
+
+            case PacketType.SelectTargetRequest:
+                return new SelectTargetRequest();
 
             default:
                 return null;
@@ -114,7 +123,7 @@ public class NetworkManager : MonoBehaviour
 
     public static void Send(int sendTo, Packet packet)
     {
-        if (packet.type != PacketType.PlayerMovementUpdate)
+        if (packet.type != PacketType.EntitySync)
         {
             Debug.Log("S: " + packet.type + " ID:" + sendTo);
         }
@@ -124,23 +133,34 @@ public class NetworkManager : MonoBehaviour
 
     public void SendAll(Packet packet)
     {
-        foreach (var ids in connectionToAccountID)
+        if (connectionToAccountID.Count > 0)
         {
-            Send(ids.Key, packet);
-        }
-    }
-    public void SendAllExpect(int avoid, Packet packet)
-    {
-        foreach (var ids in connectionToAccountID)
-        {
-            if (ids.Value != avoid)
-                Send(ids.Value, packet);
+            foreach (var ids in connectionToAccountID)
+            {
+                Send(ids.Key, packet);
+            }
         }
     }
 
+    public void SendAllExpect(int avoid, Packet packet)
+    {
+        if (connectionToAccountID.Count > 0)
+        {
+            foreach (var ids in connectionToAccountID)
+            {
+                if (ids.Value != avoid)
+                    Send(ids.Value, packet);
+            }
+        }
+    }
 
     private void OnApplicationQuit()
     {
         server.Stop();
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.DrawSphere(transform.position, MAX_INTERACTION_DISTANCE);
     }
 }

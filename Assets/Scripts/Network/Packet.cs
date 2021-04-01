@@ -5,17 +5,28 @@ public enum PacketType
 {
     Unknown,
 
+    WelcomeMessage,
+    Ping,
+
     LoginRequest,
+    RegisterRequest,
+    GetCharactersRequest,
     CharacterCreationRequest,
-    PlayerSyncRequest,
+    CharacterLoginRequest,
+    GetWorldRequest,
     PlayerMovementRequest,
-    PlayerLoginRequest,
+    SelectTargetRequest,
+    InteractionRequest,
 
     LoginAnswer,
+    RegisterAnswer,
+    GetCharactersAnswer,
     CharacterCreationAnswer,
-    PlayerSyncAnswer,
-    PlayerMovementUpdate,
     CharacterLoginAnswer,
+    GetWorldAnswer,
+    EntitySync,
+    SelectTargetAnswer,
+    InteractionAnswer,
 
     PlayerDisconnected,
 }

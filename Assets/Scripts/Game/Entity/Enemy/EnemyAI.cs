@@ -12,6 +12,7 @@ public enum EnemyState
     ChaseTarget,
     Attacking,
     Returning,
+    Dead,
 }
 
 public class EnemyAI : MonoBehaviour
@@ -24,10 +25,15 @@ public class EnemyAI : MonoBehaviour
     public float minDamageOverride;
     public float maxDamageOverride;
 
-    [Range(0, 1)]
-    public float stabRate;
+    [Range(150, 10000)]
+    public float stabCooldown;
+    private DateTime lastStab;
     private float nextStabTime;
-    private EnemyState state;
+    private EnemyState state
+    {
+        get => enemy.state;
+        set => enemy.state = value;
+    }
     private Vector3 roamPosition;
     private Vector3 startingPosition
     {
@@ -44,8 +50,6 @@ public class EnemyAI : MonoBehaviour
 
     [Range(1, 100)]
     public float wanderDistance = 10;
-
-
 
     private void Start()
     {
@@ -87,6 +91,7 @@ public class EnemyAI : MonoBehaviour
 
     private void Enemy_OnDeath()
     {
+        state = EnemyState.Dead;
         //Weird error where i have to disable or else it doesnt teleport correctly.
         agent.enabled = false;
         agent.isStopped = true;
@@ -129,7 +134,13 @@ public class EnemyAI : MonoBehaviour
             default:
                 break;
         }
-        
+
+        //TODO: better movement update
+        EntitySync sync = new EntitySync();
+        sync.entity = enemy;
+        sync.entityType = EntityType.Enemy;
+        sync.Serialize();
+        NetworkManager.instance.SendAll(sync);
     }
 
     private void RoamAround()
@@ -198,7 +209,7 @@ public class EnemyAI : MonoBehaviour
         agent.SetDestination(targetPos);
 
         //If we close enough to meele and can stap well then we should stab!
-        if (isInMeeleDistance() && Time.time > nextStabTime)
+        if (isInMeeleDistance())
             state = EnemyState.Attacking;
     }
 
@@ -220,17 +231,21 @@ public class EnemyAI : MonoBehaviour
             return;
         }
 
+        TimeSpan span = DateTime.Now - lastStab;
+        if (span.TotalMilliseconds < stabCooldown)
+            return;
+
         //If all of those are true then we can stab!
         agent.SetDestination(enemy.transform.position);
         enemy.DoDamageTo(enemy.target);
-        nextStabTime = Time.time + stabRate;
+        lastStab = DateTime.Now;
     }
 
     private Vector3 GetRoamingPosition()
     {
         float x = UnityEngine.Random.Range(-1f, 1f);
-        float y = UnityEngine.Random.Range(-1f, 1f);
-        Vector3 randomDir = new Vector3(x, y).normalized;
+        float z = UnityEngine.Random.Range(-1f, 1f);
+        Vector3 randomDir = new Vector3(x, 0, z).normalized;
 
         float distance = UnityEngine.Random.Range(innerAttackRange, wanderDistance);
         return startingPosition + randomDir * distance;

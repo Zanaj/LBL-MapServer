@@ -17,6 +17,8 @@ public class Enemy : Entity
     public delegate void _OnDeath();
     public delegate void _OnRespawn();
 
+    public EnemyState state;
+
     public event _OnDeath OnDeath;
     public event _OnRespawn OnRespawn;
     public string targetGUID;
@@ -128,6 +130,8 @@ public class Enemy : Entity
         writer.Write(transform.position.y);
         writer.Write(transform.position.z);
 
+        writer.Write(transform.eulerAngles.y);
+
         writer.Write(options.Length);
         if (options.Length > 0)
         {
@@ -145,6 +149,7 @@ public class Enemy : Entity
         writer.Write(0);
         writer.Write(level);
         writer.Write(isInvisible);
+        writer.Write((int)state);
     }
 
     public override void Death()
@@ -181,5 +186,7 @@ public class Enemy : Entity
         sync.Serialize();
 
         NetworkManager.instance.SendAll(sync);
+
+        OnRespawn?.Invoke();
     }
 }

@@ -17,7 +17,7 @@ GameObject:
   - component: {fileID: -3806548750097015120}
   m_Layer: 8
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -101,6 +101,9 @@ MonoBehaviour:
   entityGUID: 
   options: 
   target: {fileID: 0}
+  respawnSeconds: 0
+  startPosition: {x: 0, y: 0, z: 0}
+  needRespawning: 0
   stats: {fileID: 0}
   characterID: 0
   guildId: 0
@@ -113,8 +116,10 @@ MonoBehaviour:
   jumpHeight: 5
   gravity: -9.81
   controller: {fileID: 1841078012}
+  hasInitialized: 0
   inputs: 
   skillBar: 
+  health: 0
 --- !u!143 &1841078012
 CharacterController:
   m_ObjectHideFlags: 0

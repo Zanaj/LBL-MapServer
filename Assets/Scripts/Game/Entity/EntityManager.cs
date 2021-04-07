@@ -1,16 +1,52 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class EntityManager : MonoBehaviour
 {
     public static EntityManager instance;
-    public List<Entity> entities;
+
+    public List<Entity> unclaimed = new List<Entity>();
+
+    public List<Entity> entities
+    {
+        get
+        {
+            List<Entity> _e = new List<Entity>();
+            _e.AddRange(PlayerManager.instance.onlinePlayers);
+            _e.AddRange(EnemyManager.instance.enemies);
+            _e.AddRange(NPCManager.instance.NPCS);
+            _e.AddRange(unclaimed);
+
+            return _e;
+        }
+
+    }
 
     void Awake()
     {
         instance = this;
-        entities = new List<Entity>();
+    }
+
+    private void FixedUpdate()
+    {
+        //List<Entity> checks = entities;
+        //checks.RemoveAll(x => x.type == EntityType.Player);
+        //checks.RemoveAll(x => x.type == EntityType.NPC);
+        //checks.RemoveAll(x => x.type == EntityType.Unknown);
+
+        //for (int i = 0; i < checks.Count; i++)
+        //{
+        //    Entity chk = checks[i];
+        //    TimeSpan span = DateTime.Now - chk.respawnTimer;
+
+        //    if(span.TotalSeconds >= chk.respawnSeconds)
+        //    {
+        //        chk.transform.position = chk.startPosition;
+        //        chk.OnRespawn();
+        //    }
+        //}
     }
 
     #region UseInteraction
@@ -59,14 +95,13 @@ public class EntityManager : MonoBehaviour
             {
                 if(target.options.Length > 0)
                 {
-                    if(target.options.Length < option)
+                    if(option <= target.options.Length)
                     {
                         InteractionType type = target.options[option];
                         switch (type)
                         {
                             case InteractionType.Unknown:
                                 return false;
-                                break;
                             case InteractionType.Attack:
                                 return CanUseAttackAction(requester, option, extraInfo);
                                 
@@ -99,13 +134,13 @@ public class EntityManager : MonoBehaviour
                                 
                         }
                     }
-                    else { return false; }
+                    else { Debug.Log("Selected option is out of the range of options: " + option + "/" + target.options.Length); return false; }
                 }
-                else { return false; }
+                else { Debug.Log("Target dont have any options"); return false; }
             }
-            else { return false; }
+            else { Debug.Log("target is not interactable"); return false; }
         }
-        else { return false; }
+        else { Debug.Log("Requster aint got no target!"); return false; }
     }
 
     public bool CanUseAttackAction(Player requester, int option, List<string> extraInfo)
@@ -128,15 +163,23 @@ public class EntityManager : MonoBehaviour
             if (attackType < 0)
             {
                 
-                if(dis < NetworkManager.instance.MAX_INTERACTION_DISTANCE)
+                if(dis <= NetworkManager.instance.MAX_INTERACTION_DISTANCE)
                 {
                     if (requester.CanAttack())
                     {
                         return true;
                     }
-                    else { return false; }
+                    else
+                    {
+                        Debug.Log("User cannot attack yet!");
+                        return false;
+                    }
                 }
-                else { return false; }
+                else 
+                {
+                    Debug.Log("Requester Too far away! Distance: " + dis);
+                    return false;
+                }
             }
             else
             {
@@ -147,10 +190,18 @@ public class EntityManager : MonoBehaviour
                     //TODO: use skill;
                     return true;
                 }
-                else { return false; }
+                else
+                {
+                    Debug.Log("Requested a skill hotkey out of hotkey bar");
+                    return false;
+                }
             }
         }
-        else { return false; }
+        else
+        {
+            Debug.LogWarning(attackType + " is not a valid type");
+            return false;
+        }
     }
 
     public bool CanUseGeneralAction(Player requester, int option, List<string> extraInfo)

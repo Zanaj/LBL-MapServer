@@ -19,44 +19,64 @@ public class SelectTargetRequest : Packet
     public override void OnRecieve(Message msg)
     {
         bool isAllowed = false;
-        Entity entity = EntityManager.instance.entities.Find(x => x.entityGUID == entityGUID);
-        if(entity != null)
+        int characterID = NetworkManager.instance.connectionToAccountID[msg.connectionId];
+        Player requester = PlayerManager.instance.onlinePlayers.Find(x => x.characterID == characterID);
+
+        if(requester.pendingTargetGUID == string.Empty)
         {
-            int characterID = NetworkManager.instance.connectionToAccountID[msg.connectionId];
-            Player requester = PlayerManager.instance.onlinePlayers.Find(x => x.characterID == characterID);
+            requester.pendingTargetGUID = entityGUID;
+            Entity targetEntity = EntityManager.instance.entities.Find(x => x.entityGUID == entityGUID);
+            float maxDistance = 0;
 
-            Vector3 playerPos = requester.transform.position;
-            Vector3 entityPos = entity.transform.position;
-
-            float dis = Vector3.Distance(playerPos, entityPos);
-            if(entity.type == EntityType.Enemy)
+            if(targetEntity != null)
             {
-                isAllowed = dis <= Player.TARGET_VIEW_DISTANCE;
-            }
-            else
-            {
-                isAllowed = dis <= NetworkManager.instance.MAX_INTERACTION_DISTANCE;
-            }
-
-            if (isAllowed)
-            {
-                isAllowed = entity.isInteractable && entity.options.Length > 0;
-                if (isAllowed)
+                switch (targetEntity.type)
                 {
-                    requester.target = entity;
+                    case EntityType.Unknown:
+                        maxDistance = Player.TARGET_VIEW_DISTANCE;
+                        break;
+                    case EntityType.Interactable:
+                        maxDistance = Player.TARGET_VIEW_DISTANCE;
+                        break;
+                    case EntityType.Enemy:
+                        maxDistance = Player.TARGET_VIEW_DISTANCE;
+                        break;
+                    case EntityType.Player:
+                        maxDistance = Player.TARGET_VIEW_DISTANCE;
+                        break;
+                    case EntityType.NPC:
+                        maxDistance = Player.TARGET_VIEW_DISTANCE;
+                        break;
+                    case EntityType.Special:
+                        maxDistance = Player.TARGET_VIEW_DISTANCE;
+                        break;
+                    default:
+                        break;
+                }
+
+                Vector3 reqPos = requester.transform.position;
+                Vector3 entPos = targetEntity.transform.position;
+
+                float distance = Vector3.Distance(reqPos, entPos);
+                if(distance <= maxDistance)
+                {
+                    if(targetEntity.options.Length > 0 && targetEntity.isInteractable)
+                    {
+                        isAllowed = true;
+                        requester.target = targetEntity;
+                    }
                 }
             }
+            else { Debug.Log("Target null with the ID of: " + entityGUID); }
         }
-
-            
+        else { Debug.Log("Still processing target"); }
 
         SelectTargetAnswer answer = new SelectTargetAnswer();
+        answer.entityGUID = requester.pendingTargetGUID;
         answer.isAllowed = isAllowed;
-
-        string id = entity == null ? "NA" : entity.entityGUID;
-        answer.entityGUID = id;
         answer.Serialize();
-
         NetworkManager.Send(msg.connectionId, answer);
+
+        requester.pendingTargetGUID = string.Empty;
     }
 }

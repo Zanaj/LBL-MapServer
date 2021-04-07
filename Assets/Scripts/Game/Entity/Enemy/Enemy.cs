@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -13,9 +14,11 @@ public enum EnemyType
 
 public class Enemy : Entity
 {
-    [HideInInspector]public Vector3 startPosition;
-    public NavMeshAgent agent;
+    public delegate void _OnDeath();
+    public delegate void _OnRespawn();
 
+    public event _OnDeath OnDeath;
+    public event _OnRespawn OnRespawn;
     public string targetGUID;
 
     public bool isInvisible;
@@ -27,16 +30,13 @@ public class Enemy : Entity
 
     public SphereCollider aggroCollider;
 
-    [Range(1, 10)]
-    public float innerAttackRange = 1;
-
-    [Range(1,100)]
-    public float visableRange = 2;
-
-    [Range(1,100)]
-    public float wanderDistance = 10;
+    public bool isAlive;
 
     public List<Player> targets;
+
+    public float _health;
+    public float _maxHealth;
+    public float _wound;
 
     public float health 
     {
@@ -44,78 +44,77 @@ public class Enemy : Entity
         get { return GetVital(Stat.Health).currentValue; }
     }
 
+    public float maxHealth
+    {
+        set { GetVital(Stat.Health).maxValue = value; }
+        get { return GetVital(Stat.Health).maxValue; }
+    }
+
+    public float wound
+    {
+        set { GetVital(Stat.Health).debuffValue = value; }
+        get { return GetVital(Stat.Health).debuffValue; }
+    }
+
+    public int level;
+
     private void Start()
     {
+        OnDamageRecieved += EnemyDamaged;
+
+        Spawn();
+    }
+
+    private void EnemyDamaged(EntityStats attacker)
+    {
+        EntitySync sync = new EntitySync();
+        sync.entity = this;
+        sync.entityType = EntityType.Enemy;
+        sync.Serialize();
+        NetworkManager.instance.SendAll(sync);
+
+    }
+
+    public void Spawn()
+    {
+        OnRespawn?.Invoke();
+
+        entityGUID = System.Guid.NewGuid().ToString();
         Initialize();
         targetGUID = "NA";
-
-        Debug.Log("HP: " + health);
 
         targets = new List<Player>();
         startPosition = gameObject.transform.position;
         EnemyManager.instance.enemies.Add(this);
+        EntityManager.instance.entities.Add(this);
 
-        aggroCollider.radius = visableRange;
+        isAlive = true;
     }
+
+    public bool dies = false;
 
     private void Update()
     {
-        if (PlayerManager.instance.onlinePlayers.Exists(x => x.entityGUID != targetGUID))
-            UpdateTarget(null);
-
-        if (target != null)
+        if (needRespawning)
         {
-            Vector3 targetPos = target.transform.position;
-            Vector3 myPos = gameObject.transform.position;
+            TimeSpan span = DateTime.Now - respawnTimer;
 
-            float distance = Vector3.Distance(myPos, targetPos);
-            float currWander = Vector3.Distance(startPosition, myPos);
-
-            if (currWander < wanderDistance)
+            if (span.TotalSeconds >= respawnSeconds)
             {
-                if (distance <= innerAttackRange)
-                {
-                    agent.SetDestination(myPos);
-                    //TODO: do the stabby wabby
-                }
-                else
-                {
-                    agent.SetDestination(target.transform.position);
-                }
-            }
-            else
-            {
-                UpdateTarget(null);
+                OnRespawn();
             }
         }
-        else
-        {
-            agent.SetDestination(startPosition);
-        }
-    }
 
-    private void UpdateTarget(Player t)
-    {
-        if(t == null)
+        if (dies)
         {
-            agent.SetDestination(startPosition);
-            target = t;
-            targetGUID = "NA";
-        }
-        else
-        {
-            target = t;
-            targetGUID = t.entityGUID;
+            dies = false;
+            Death();
         }
 
-        if (DoesNeedUpdate())
-        {
-            EntitySync sync = new EntitySync();
-            sync.entityType = EntityType.Enemy;
-            sync.entity = this;
-            sync.Serialize();
-            NetworkManager.instance.SendAll(sync);
-        }
+        _health = health;
+        _maxHealth = maxHealth;
+        _wound = wound;
+
     }
 
     public override void MakeEntityPacket(BinaryWriter writer)
@@ -141,57 +140,46 @@ public class Enemy : Entity
         writer.Write(subType);
 
         writer.Write(targetGUID);
+        writer.Write(maxHealth);
         writer.Write(health);
+        writer.Write(0);
+        writer.Write(level);
         writer.Write(isInvisible);
     }
 
-    private void OnDrawGizmos()
+    public override void Death()
     {
-        Gizmos.color = new Color(255, 0, 0, 0.5f);
-        Gizmos.DrawSphere(this.transform.position, innerAttackRange);
+        base.Death();
+        OnDeath?.Invoke();
 
-        Gizmos.color = new Color(0, 255, 0, 0.5f);
-        Gizmos.DrawSphere(this.transform.position, visableRange);
+        respawnTimer = DateTime.Now;
 
-        Gizmos.color = new Color(0, 0, 255, 0.5f);
-        if (EditorApplication.isPlaying)
-        {
-            Gizmos.DrawSphere(startPosition, wanderDistance);
-        }
-        else
-        {
-            Gizmos.DrawSphere(transform.position, wanderDistance);
-        }
+        Vector3 endPos = EnemyManager.instance.outOfSight.transform.position;
+
+        isAlive = false;
+        transform.position = endPos;
+
+        EntitySync sync = new EntitySync();
+        sync.entity = this;
+        sync.entityType = EntityType.Enemy;
+        sync.Serialize();
+
+        NetworkManager.instance.SendAll(sync);
+        needRespawning = true;
     }
 
-    private void OnTriggerEnter(Collider col)
+    public override void Respawn()
     {
-        GameObject gObj = col.gameObject;
-        Player p = gObj.GetComponent<Player>();
+        base.Respawn();
+        isAlive = true;
+        
+        Spawn();
 
-        if (p != null)
-        {
-            UpdateTarget(p);
-        }
-    }
+        EntitySync sync = new EntitySync();
+        sync.entity = this;
+        sync.entityType = EntityType.Enemy;
+        sync.Serialize();
 
-    private void OnTriggerExit(Collider col)
-    {
-        GameObject gObj = col.gameObject;
-        Player p = gObj.GetComponent<Player>();
-
-        if (p != null)
-        {
-            if (targets.Contains(p))
-                targets.Remove(p);
-
-            UpdateTarget(targets.FirstOrDefault());
-        }
-    }
-
-    private bool DoesNeedUpdate()
-    {
-        if(agent.remainingDistance >= agent.stoppingDistance) { return true; }
-        else { return false; }
+        NetworkManager.instance.SendAll(sync);
     }
 }

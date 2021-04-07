@@ -31,8 +31,6 @@ public class PlayerManager : MonoBehaviour
 
     public int PlayerConnected(int characterID)
     {
-        Debug.Log("Attempting to get ID: " + characterID);
-
         GameObject gObj = Instantiate(playerPrefab) as GameObject;
         Player player = gObj.GetComponent<Player>();
 
@@ -44,10 +42,8 @@ public class PlayerManager : MonoBehaviour
 
         int accountID = -1;
 
-        Debug.Log("#1");
         if (reader.Read())
         {
-            Debug.Log("#2");
             player.characterID = reader.GetInt32(0);
             accountID = reader.GetInt32("accountID");
             player.displayName = reader.GetString("name");
@@ -79,7 +75,6 @@ public class PlayerManager : MonoBehaviour
 
             if (reader.Read())
             {
-                Debug.Log("#3");
                 Account newAcc = new Account();
                 newAcc.ID = reader.GetInt32(0);
                 newAcc.username = reader.GetString(1);
@@ -97,7 +92,6 @@ public class PlayerManager : MonoBehaviour
                 reader = cmd.ExecuteReader();
                 if (reader.Read())
                 {
-                    Debug.Log("#4");
                     PlayerDesign design = new PlayerDesign();
                     design.bodyType = reader.GetInt32("bodyType");
                     design.referal = reader.GetString("referalPronoun");

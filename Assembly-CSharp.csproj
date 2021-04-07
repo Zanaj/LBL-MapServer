@@ -56,6 +56,8 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Scripts\Network\Database.cs" />
+     <Compile Include="Assets\Scripts\Game\Entity\EntityManager.cs" />
+     <Compile Include="Assets\Scripts\Network\Packets\SelectTargetAnswer.cs" />
      <Compile Include="Assets\Scripts\Core\Telepathy\Client.cs" />
      <Compile Include="Assets\Scripts\Core\Telepathy\Logger.cs" />
      <Compile Include="Assets\Scripts\Game\Entity\NPC\NPCManager.cs" />
@@ -68,6 +70,9 @@
      <Compile Include="Assets\Scripts\Game\Entity\Player\PlayerManager.cs" />
      <Compile Include="Assets\Scripts\Core\Telepathy\Common.cs" />
      <Compile Include="Assets\Scripts\Network\Account.cs" />
+     <Compile Include="Assets\Scripts\Game\Entity\Enemy\EnemyAI.cs" />
+     <Compile Include="Assets\Scripts\Network\Packets\InteractionAnswer.cs" />
+     <Compile Include="Assets\Scripts\Network\Packets\InteractionRequest.cs" />
      <Compile Include="Assets\Scripts\Game\Entity\Enemy\EnemyManager.cs" />
      <Compile Include="Assets\Scripts\Core\Telepathy\EventType.cs" />
      <Compile Include="Assets\Scripts\Game\Entity\Enemy\Enemy.cs" />
@@ -75,16 +80,12 @@
      <Compile Include="Assets\Scripts\Network\Packets\GetWorldAnswer.cs" />
      <Compile Include="Assets\Scripts\Game\Entity\Entity.cs" />
      <Compile Include="Assets\Scripts\Core\Telepathy\NetworkStreamExtensions.cs" />
-     <Compile Include="Assets\Scripts\Game\Entity\Player\PlayerStat.cs" />
+     <Compile Include="Assets\Scripts\Game\Entity\Player\EntityStat.cs" />
      <Compile Include="Assets\Scripts\Core\Telepathy\Utils.cs" />
      <Compile Include="Assets\Scripts\Network\Packets\PlayerMovementRequest.cs" />
+     <Compile Include="Assets\Scripts\Network\Packets\SelectTargetRequest.cs" />
      <Compile Include="Assets\Scripts\Game\Entity\Player\PlayerDesign.cs" />
      <Compile Include="Assets\Scripts\Network\Packet.cs" />
-     <Compile Include="Assets\Scripts\Network\Packets\InteractionRequest.cs" />
-     <Compile Include="Assets\Scripts\Network\Packets\SelectTargetRequest.cs" />
-     <Compile Include="Assets\Scripts\Network\Packets\SelectTargetAnswer.cs" />
-     <Compile Include="Assets\Scripts\Network\Packets\InteractionAnswer.cs" />
-     <Compile Include="Assets\Scripts\Game\Entity\EntityManager.cs" />
  <Reference Include="Unity.Timeline.Editor">
  <HintPath>C:/Users/Melon/Documents/My Game/LBL-MapServer/LBL-MapServer/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>
  </Reference>

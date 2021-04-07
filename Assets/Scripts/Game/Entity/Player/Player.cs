@@ -24,6 +24,8 @@ public partial class Player : Entity
     public float exp;
     public int totalLevel;
 
+    public string pendingTargetGUID;
+
     public float rotation = 0;
     public float walkingSpeed = 5;
     public float jumpHeight = 5;
@@ -31,20 +33,30 @@ public partial class Player : Entity
     private float yVelocity;
     public CharacterController controller;
 
+    public bool hasInitialized;
+
     public bool[] inputs;
 
     public int[] skillBar;
+
+    public float health = 0;
 
     public override bool isInteractable => true;
     public override EntityType type => EntityType.Player; 
 
     private void Start()
     {
+        Initialize();
+        hasInitialized = true;
+        entityGUID = Guid.NewGuid().ToString();
+        pendingTargetGUID = string.Empty;
         lastAttack = DateTime.Now;
+
     }
 
     private void FixedUpdate()
     {
+        health = GetVital(Stat.Health).currentValue;
         transform.eulerAngles = new Vector3(0, rotation, 0);
 
         if (inputs.Length > 0)
@@ -59,6 +71,11 @@ public partial class Player : Entity
 
             Move(_inputDirection);
         }
+
+        if (Input.GetKeyDown(KeyCode.Delete))
+        {
+            DoDamageTo(target);
+        }
     }
 
     private void Move(Vector2 _inputDirection)
@@ -72,7 +89,6 @@ public partial class Player : Entity
             yVelocity = inputs[4] ? jumpHeight : 0;
         }
 
-        //yVelocity += gravity;
         _moveDirection.y = 0;
         controller.Move(_moveDirection);
 
@@ -89,6 +105,7 @@ public partial class Player : Entity
     {
         writer.Write((int)EntityType.Player);
         writer.Write(displayName);
+
         writer.Write(entityGUID);
         writer.Write(isInteractable);
 
@@ -103,6 +120,22 @@ public partial class Player : Entity
         writer.Write(design.genativ);
         writer.Write(design.referal);
         writer.Write(rotation);
+
+        writer.Write(hasInitialized);
+        if (hasInitialized)
+        {
+            writer.Write(GetVital(Stat.Health).maxValue);
+            writer.Write(GetVital(Stat.Health).currentValue);
+            writer.Write(GetVital(Stat.Health).debuffValue);
+
+            writer.Write(GetVital(Stat.Stamina).maxValue);
+            writer.Write(GetVital(Stat.Stamina).currentValue);
+            writer.Write(GetVital(Stat.Stamina).debuffValue);
+
+            writer.Write(GetVital(Stat.Mana).maxValue);
+            writer.Write(GetVital(Stat.Mana).currentValue);
+            writer.Write(GetVital(Stat.Mana).debuffValue);
+        }
     }
 
     public bool CanAttack()

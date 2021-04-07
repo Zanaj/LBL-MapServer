@@ -37,10 +37,18 @@ public class Entity : EntityStats
     public virtual bool isInteractable { get; }
     public Entity target;
 
-    private void Awake()
+    public float respawnSeconds;
+    public DateTime respawnTimer;
+    public Vector3 startPosition;
+    public bool needRespawning;
+
+    private void Start()
     {
+        startPosition = transform.position;
+
         entityGUID = Guid.NewGuid().ToString();
         EntityManager.instance.entities.Add(this);
+
         switch (type)
         {
             case EntityType.Unknown:
@@ -55,6 +63,11 @@ public class Entity : EntityStats
             default:
                 break;
         }
+    }
+
+    private void Update()
+    {
+        
     }
 
     public virtual void MakeEntityPacket(BinaryWriter writer)
@@ -76,5 +89,17 @@ public class Entity : EntityStats
                 writer.Write((int)options[i]);
             }
         }
+    }
+
+    public override void Death()
+    {
+        base.Death();
+        respawnTimer = DateTime.Now;
+    }
+
+    public virtual void Respawn()
+    {
+        needRespawning = false;
+        transform.position = startPosition;
     }
 }

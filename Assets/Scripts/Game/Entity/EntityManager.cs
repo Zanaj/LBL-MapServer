@@ -57,7 +57,14 @@ public class EntityManager : MonoBehaviour
 
         if (type != InteractionType.Attack)
         {
-            
+            if (!(target is IInteractable))
+                return;
+
+            IInteractable interactable = (IInteractable)target;
+            if (!interactable.CanInteract(requester, extraInfo))
+                return;
+
+            interactable.InteractWith(requester, extraInfo);
         }
         else
         {

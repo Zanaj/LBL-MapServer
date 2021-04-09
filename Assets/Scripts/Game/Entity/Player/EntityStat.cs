@@ -101,6 +101,8 @@ public class EntityStats : MonoBehaviour
     public event _OnDamageDealt OnDamageDealt;
     public event _OnDamageRecieved OnDamageRecieved;
 
+    public List<Condition> conditions;
+
     public void Initialize()
     {
         //TODO: universal database for base values
@@ -111,6 +113,7 @@ public class EntityStats : MonoBehaviour
 
         stats = new Dictionary<Stat, int>();
         vitals = new List<Vital>();
+        conditions = new List<Condition>();
 
         Vital health = new Vital(Stat.Health, vitalBase);
         Vital stamina = new Vital(Stat.Stamina, vitalBase);
@@ -183,7 +186,7 @@ public class EntityStats : MonoBehaviour
         }
     }
 
-    public float GetStat(Stat stat)
+    public virtual float GetStat(Stat stat, bool includeBuffs)
     {
         int index = (int)stat;
         StatType type = GetStatType(stat);
@@ -213,7 +216,9 @@ public class EntityStats : MonoBehaviour
             else
             {
                 if (stats.ContainsKey(stat))
+                {
                     return stats[stat];
+                }
                 else
                     return -1;
             }
@@ -254,7 +259,7 @@ public class EntityStats : MonoBehaviour
         UpdateMinorStats();
     }
 
-    public Vital GetVital(Stat stat)
+    public virtual Vital GetVital(Stat stat)
     {
         if(vitals.Exists(x => x.vital == stat))
         {
@@ -272,11 +277,11 @@ public class EntityStats : MonoBehaviour
 
     public void UpdateMinorStats()
     {
-        float strength = GetStat(Stat.Strength);
-        float intelligence = GetStat(Stat.Intelligence);
-        float dexterity = GetStat(Stat.Dexterity);
-        float willpower = GetStat(Stat.Willpower);
-        float luck = GetStat(Stat.Luck);
+        float strength = GetStat(Stat.Strength, true);
+        float intelligence = GetStat(Stat.Intelligence, true);
+        float dexterity = GetStat(Stat.Dexterity, true);
+        float willpower = GetStat(Stat.Willpower, true);
+        float luck = GetStat(Stat.Luck, true);
 
         SetStat(Stat.Max_Damage, strength / 2.5f);
         SetStat(Stat.Min_Damage, strength / 3f);
@@ -307,9 +312,9 @@ public class EntityStats : MonoBehaviour
         if (CanDoDamage())
         {
             Vital enemyHealth = target.GetVital(Stat.Health);
-            float myMinDmg = GetStat(Stat.Min_Damage);
-            float myMaxDmg = GetStat(Stat.Max_Damage);
-            float myStun = GetStat(Stat.Stun);
+            float myMinDmg = GetStat(Stat.Min_Damage, true);
+            float myMaxDmg = GetStat(Stat.Max_Damage, true);
+            float myStun = GetStat(Stat.Stun, true);
 
             target.stun = myStun;
             target.hasBeenHit = true;

@@ -6,6 +6,7 @@ public enum PacketType
     Unknown,
 
     WelcomeMessage,
+    RegisterServer,
     Ping,
 
     LoginRequest,

@@ -14,6 +14,12 @@ public enum EntityType
     Special,
 }
 
+public interface IInteractable
+{
+    bool CanInteract(Entity activator, List<string> extraInfo);
+    void InteractWith(Entity activator, List<string> extraInfo);
+}
+
 public enum InteractionType
 {
     Unknown,
@@ -22,10 +28,30 @@ public enum InteractionType
     Talk,
     Shop,
     NpcOption,
+    OpenDoor,
+    PickItem,
     UseItem,
     EatItem,
     EquipItem,
     DropItem,
+}
+
+public enum ConditionType
+{
+    DamageVitalOverTime,
+    ApplyDebuffOverTime,
+    Stat,
+}
+
+public struct Condition
+{
+    public ConditionType type;
+    public Stat conditionedStat;
+    public float amount;
+    public int originType;
+    public int originID;
+
+    public DateTime recievedAt;
 }
 
 public class Entity : EntityStats
@@ -42,8 +68,12 @@ public class Entity : EntityStats
     public Vector3 startPosition;
     public bool needRespawning;
 
+    public Dictionary<CooldownCategory, DateTime> cooldowns;
+    
     private void Start()
     {
+        cooldowns = new Dictionary<CooldownCategory, DateTime>();
+
         startPosition = transform.position;
 
         entityGUID = Guid.NewGuid().ToString();
@@ -89,6 +119,19 @@ public class Entity : EntityStats
                 writer.Write((int)options[i]);
             }
         }
+    }
+
+    public void ModifyStat(Stat stat, float value)
+    {
+        float currVal = GetStat(stat, false);
+        currVal += value;
+
+        SetStat(stat, value);
+    }
+
+    public void ApplyCondition(Condition condition)
+    {
+        conditions.Add(condition);
     }
 
     public override void Death()

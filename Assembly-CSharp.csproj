@@ -62,10 +62,13 @@
      <Compile Include="Assets\Scripts\Core\Telepathy\Logger.cs" />
      <Compile Include="Assets\Scripts\Game\Entity\NPC\NPCManager.cs" />
      <Compile Include="Assets\Scripts\Core\Telepathy\Message.cs" />
+     <Compile Include="Assets\Scripts\Game\Entity\ItemSpawn.cs" />
+     <Compile Include="Assets\Scripts\Game\ScriptableObjects\ConsumableItem.cs" />
      <Compile Include="Assets\Scripts\Core\Telepathy\Server.cs" />
      <Compile Include="Assets\Scripts\Network\Packets\GetWorldRequest.cs" />
      <Compile Include="Assets\Scripts\Network\NetworkManager.cs" />
      <Compile Include="Assets\Scripts\Game\Entity\Player\Player.cs" />
+     <Compile Include="Assets\Scripts\Game\ScriptableObjects\UsableItem.cs" />
      <Compile Include="Assets\Scripts\Core\Telepathy\SafeQueue.cs" />
      <Compile Include="Assets\Scripts\Game\Entity\Player\PlayerManager.cs" />
      <Compile Include="Assets\Scripts\Core\Telepathy\Common.cs" />
@@ -73,9 +76,11 @@
      <Compile Include="Assets\Scripts\Game\Entity\Enemy\EnemyAI.cs" />
      <Compile Include="Assets\Scripts\Network\Packets\InteractionAnswer.cs" />
      <Compile Include="Assets\Scripts\Network\Packets\InteractionRequest.cs" />
+     <Compile Include="Assets\Scripts\Game\ScriptableObjects\ItemBase.cs" />
      <Compile Include="Assets\Scripts\Game\Entity\Enemy\EnemyManager.cs" />
      <Compile Include="Assets\Scripts\Core\Telepathy\EventType.cs" />
      <Compile Include="Assets\Scripts\Game\Entity\Enemy\Enemy.cs" />
+     <Compile Include="Assets\Scripts\Game\ScriptableObjects\EqupableItem.cs" />
      <Compile Include="Assets\Scripts\Network\Packets\EntitySync.cs" />
      <Compile Include="Assets\Scripts\Network\Packets\GetWorldAnswer.cs" />
      <Compile Include="Assets\Scripts\Game\Entity\Entity.cs" />
@@ -86,6 +91,7 @@
      <Compile Include="Assets\Scripts\Network\Packets\SelectTargetRequest.cs" />
      <Compile Include="Assets\Scripts\Game\Entity\Player\PlayerDesign.cs" />
      <Compile Include="Assets\Scripts\Network\Packet.cs" />
+     <Compile Include="Assets\Scripts\Network\Packets\RegisterServer.cs" />
  <Reference Include="Unity.Timeline.Editor">
  <HintPath>C:/Users/Melon/Documents/My Game/LBL-MapServer/LBL-MapServer/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>
  </Reference>

@@ -394,7 +394,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 139630045}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -37.11, y: 0.5, z: -18.5}
+  m_LocalPosition: {x: -37.69, y: 0.5, z: -18.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -419,6 +419,7 @@ MonoBehaviour:
   respawnSeconds: 3
   startPosition: {x: 0, y: 0, z: 0}
   needRespawning: 0
+  state: 0
   targetGUID: 
   isInvisible: 0
   enemyType: 0
@@ -546,6 +547,59 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 7
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &290236502
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 290236504}
+  - component: {fileID: 290236503}
+  m_Layer: 0
+  m_Name: Pickup
+  m_TagString: Untagged
+  m_Icon: {fileID: -5938655980376293919, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &290236503
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 290236502}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c364fbd5d09a7094d8a6c31420aa5ec2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  displayName: 
+  entityGUID: 
+  options: 07000000
+  target: {fileID: 0}
+  respawnSeconds: 0
+  startPosition: {x: 0, y: 0, z: 0}
+  needRespawning: 0
+  owner: {fileID: 0}
+  item: {fileID: 11400000, guid: bedc06acd51b3ed42aeda36080975610, type: 2}
+  amount: 0
+--- !u!4 &290236504
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 290236502}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 9.045, y: 0, z: -28.95}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &303490567 stripped
 GameObject:
@@ -1112,6 +1166,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MAX_INTERACTION_DISTANCE: 4
+  loginServerIP: 92.246.1.244
+  loginServerPort: 1338
   playerPrefab: {fileID: 3803608951793874945, guid: 7f9bcef7790fed34fb885c84424a9494, type: 3}
   port: 1336
   isActive: 0

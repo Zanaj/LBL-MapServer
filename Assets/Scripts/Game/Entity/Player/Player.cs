@@ -2,11 +2,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
 
 public partial class Player : Entity
 {
+    public delegate void _OnLevelUp(int lastLevel, int currentLevel);
+    public event _OnLevelUp OnLevelUp;
+
     public static float TARGET_VIEW_DISTANCE = 50;
     public static float AttackSpeed = 750;
 
@@ -21,7 +25,9 @@ public partial class Player : Entity
 
     public int guildId;
     public int ap;
+
     public float exp;
+    public int level { get { return Mathf.RoundToInt(exp / 100); } }
     public int totalLevel;
 
     public string pendingTargetGUID;
@@ -34,18 +40,19 @@ public partial class Player : Entity
     public CharacterController controller;
 
     public bool hasInitialized;
-
     public bool[] inputs;
-
     public int[] skillBar;
-
     public float health = 0;
 
     public override bool isInteractable => true;
-    public override EntityType type => EntityType.Player; 
+    public override EntityType type => EntityType.Player;
+
+    public Dictionary<EquipmentSlot, EquipableItem> equipped;
 
     private void Start()
     {
+        equipped = new Dictionary<EquipmentSlot, EquipableItem>();
+
         Initialize();
         hasInitialized = true;
         entityGUID = Guid.NewGuid().ToString();
@@ -142,5 +149,37 @@ public partial class Player : Entity
     {
         TimeSpan span = DateTime.Now - lastAttack;
         return span.TotalMilliseconds >= AttackSpeed;
+    }
+
+    public void GiveExp(float exp)
+    {
+        int lastLevel = level;
+        this.exp += exp;
+
+        int newLevel = level;
+        if(newLevel > lastLevel)
+        {
+            exp = 0;
+            totalLevel++;
+            OnLevelUp?.Invoke(lastLevel, newLevel);
+        }
+    }
+
+    public override float GetStat(Stat stat, bool includeBuffs)
+    {
+        float equipmentValue = 0;
+        if (includeBuffs)
+        {
+            foreach (EquipableItem equipment in equipped.Values)
+            {
+                List<StatPair> allStats = equipment.buffs.Where(x => x.stat == stat).ToList();
+                if (allStats.Count <= 0)
+                    continue;
+
+                equipmentValue += allStats.Sum(x => x.value);
+            }
+        }
+
+        return base.GetStat(stat, includeBuffs) + equipmentValue;
     }
 }

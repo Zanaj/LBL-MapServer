@@ -31,6 +31,8 @@ public class NetworkManager : MonoBehaviour
 {
     [Range(1,100)]
     public float MAX_INTERACTION_DISTANCE = 2;
+    public string loginServerIP = "";
+    public int loginServerPort = 1337;
 
     [Header("Base Server Info")]
     public static NetworkManager instance;
@@ -39,6 +41,8 @@ public class NetworkManager : MonoBehaviour
     public Dictionary<int, int> connectionToAccountID;
     public static Server server = new Server();
     public bool isActive;
+
+    public static Client client;
 
     private void Awake()
     {
@@ -50,13 +54,30 @@ public class NetworkManager : MonoBehaviour
         
         instance = this;
         DontDestroyOnLoad(this);
-        server.Start(port);
+
+        client = new Client();
+        client.Connect(loginServerIP, loginServerPort);
+        
     }
 
     private void Update()
     {
-        isActive = server.Active;
-        MessageLoop();
+        if (client.Connected)
+        {
+            RegisterServer register = new RegisterServer();
+            register.port = port;
+            register.Serialize();
+            client.Send(register.buffer);
+
+            client.Disconnect();
+            server.Start(port);
+        }
+
+        if (server.Active)
+        {
+            isActive = server.Active;
+            MessageLoop();
+        }
     }
 
     private void MessageLoop()

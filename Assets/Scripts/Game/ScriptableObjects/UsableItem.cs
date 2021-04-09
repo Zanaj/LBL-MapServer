@@ -9,7 +9,7 @@ public enum UsableItemType
     Callback,
 }
 
-public abstract class UsableItem : ItemBase
+public abstract class UsableItem : ItemData
 {
     public abstract UsableItemType type { get; }
 

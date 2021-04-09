@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Item", menuName = "Content/GenericItem", order = 1)]
-public class ItemBase : ScriptableObject
+public class ItemData : ScriptableObject
 {
 
     [TextArea()]

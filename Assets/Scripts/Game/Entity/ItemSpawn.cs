@@ -3,25 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class ItemSpawn : Entity
+public class ItemSpawn : Entity, IInteractable
 {
     public override bool isInteractable => true;
     public override EntityType type => EntityType.Interactable;
 
     public Player owner;
 
-    public ItemBase item;
+    public ItemData item;
     public int amount;
 
     public override void Respawn() => Sync();
-
-    private void Awake()
-    {
-        EntityManager.instance.unclaimed.Add(this);
-    }
-
     private void Start()
     {
+        EntityManager.instance.unclaimed.Add(this);
         Sync();
     }
     private void Sync()
@@ -39,5 +34,21 @@ public class ItemSpawn : Entity
         }
 
         NetworkManager.instance.SendAll(sync);
+    }
+
+    public bool CanInteract(Entity activator, List<string> extraInfo)
+    {
+        if (!(activator is Player))
+            return false;
+
+        Player player = (Player)activator;
+
+
+        return true;
+    }
+
+    public void InteractWith(Entity activator, List<string> extraInfo)
+    {
+        throw new System.NotImplementedException();
     }
 }

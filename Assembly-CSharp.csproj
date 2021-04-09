@@ -85,13 +85,25 @@
      <Compile Include="Assets\Scripts\Network\Packets\GetWorldAnswer.cs" />
      <Compile Include="Assets\Scripts\Game\Entity\Entity.cs" />
      <Compile Include="Assets\Scripts\Core\Telepathy\NetworkStreamExtensions.cs" />
-     <Compile Include="Assets\Scripts\Game\Entity\Player\EntityStat.cs" />
+     <Compile Include="Assets\Scripts\Game\Entity\EntityStat.cs" />
      <Compile Include="Assets\Scripts\Core\Telepathy\Utils.cs" />
      <Compile Include="Assets\Scripts\Network\Packets\PlayerMovementRequest.cs" />
      <Compile Include="Assets\Scripts\Network\Packets\SelectTargetRequest.cs" />
      <Compile Include="Assets\Scripts\Game\Entity\Player\PlayerDesign.cs" />
      <Compile Include="Assets\Scripts\Network\Packet.cs" />
      <Compile Include="Assets\Scripts\Network\Packets\RegisterServer.cs" />
+     <Compile Include="Assets\Scripts\Game\Skills\Base\SkillData.cs" />
+     <Compile Include="Assets\Scripts\Game\Skills\StatBoostEffect.cs" />
+     <Compile Include="Assets\Scripts\Game\Skills\TauntEffect.cs" />
+     <Compile Include="Assets\Scripts\Game\Skills\RangedEffect.cs" />
+     <Compile Include="Assets\Scripts\Game\Skills\StunEffect.cs" />
+     <Compile Include="Assets\Scripts\Game\Skills\Base\EffectData.cs" />
+     <Compile Include="Assets\Scripts\Game\Skills\Base\SkillEntry.cs" />
+     <Compile Include="Assets\Scripts\Game\Skills\DamageEffect.cs" />
+     <Compile Include="Assets\Scripts\Game\ContentDatabase.cs" />
+     <Compile Include="Assets\Scripts\Game\Entity\Player\PlayerInventory.cs" />
+     <Compile Include="Assets\Scripts\Game\Definations\ItemEntry.cs" />
+     <Compile Include="Assets\Scripts\Game\Skills\DisplacementEffect.cs" />
  <Reference Include="Unity.Timeline.Editor">
  <HintPath>C:/Users/Melon/Documents/My Game/LBL-MapServer/LBL-MapServer/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>
  </Reference>

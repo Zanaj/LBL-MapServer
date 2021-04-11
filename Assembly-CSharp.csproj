@@ -64,7 +64,7 @@
      <Compile Include="Assets\Scripts\Network\Packets\SelectTargetAnswer.cs" />
      <Compile Include="Assets\Scripts\Game\Skills\StatBoostEffect.cs" />
      <Compile Include="Assets\Scripts\Core\Telepathy\Client.cs" />
-     <Compile Include="Assets\Scripts\Game\Entity\Player\PlayerInventory.cs" />
+     <Compile Include="Assets\Scripts\Game\Entity\Player\Partial Player Scripts\PlayerInventory.cs" />
      <Compile Include="Assets\Scripts\Core\Telepathy\Logger.cs" />
      <Compile Include="Assets\Scripts\Game\Entity\NPC\NPCManager.cs" />
      <Compile Include="Assets\Scripts\Game\Skills\TauntEffect.cs" />
@@ -77,7 +77,7 @@
      <Compile Include="Assets\Scripts\Game\Skills\DisplacementEffect.cs" />
      <Compile Include="Assets\Scripts\Network\NetworkManager.cs" />
      <Compile Include="Assets\Scripts\Network\Packets\InventorySync.cs" />
-     <Compile Include="Assets\Scripts\Game\Entity\Player\Player.cs" />
+     <Compile Include="Assets\Scripts\Game\Entity\Player\Partial Player Scripts\PlayerEntry.cs" />
      <Compile Include="Assets\Scripts\Game\ScriptableObjects\UsableItem.cs" />
      <Compile Include="Assets\Scripts\Game\Skills\RangedEffect.cs" />
      <Compile Include="Assets\Scripts\Core\Telepathy\SafeQueue.cs" />
@@ -103,7 +103,7 @@
      <Compile Include="Assets\Scripts\Network\Packets\PlayerMovementRequest.cs" />
      <Compile Include="Assets\Scripts\Game\Entity\Player\PlayerTest.cs" />
      <Compile Include="Assets\Scripts\Network\Packets\SelectTargetRequest.cs" />
-     <Compile Include="Assets\Scripts\Game\Entity\Player\PlayerDesign.cs" />
+     <Compile Include="Assets\Scripts\Game\Entity\Player\Partial Player Scripts\PlayerDesign.cs" />
      <Compile Include="Assets\Scripts\Network\Packet.cs" />
      <Compile Include="Assets\Scripts\Network\Packets\RegisterServer.cs" />
      <Compile Include="Assets\Scripts\Game\Definations\NetworkDefinations.cs" />
@@ -113,6 +113,9 @@
      <Compile Include="Assets\Scripts\Game\Definations\ErrorCodeEnums.cs" />
      <Compile Include="Assets\Scripts\Game\Definations\ItemDefinations.cs" />
      <Compile Include="Assets\Scripts\Game\Definations\SkillDefinations.cs" />
+     <Compile Include="Assets\Scripts\Game\Entity\Player\Partial Player Scripts\PlayerMovement.cs" />
+     <Compile Include="Assets\Scripts\Game\Entity\Player\Partial Player Scripts\PlayerDebug.cs" />
+     <Compile Include="Assets\Scripts\Game\Entity\Player\Partial Player Scripts\PlayerCombat.cs" />
  <Reference Include="Unity.Timeline.Editor">
  <HintPath>C:/Users/Melon/Documents/My Game/LBL-MapServer/LBL-MapServer/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>
  </Reference>

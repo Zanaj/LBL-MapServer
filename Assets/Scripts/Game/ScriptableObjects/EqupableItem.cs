@@ -10,14 +10,19 @@ public class EquipableItem : UsableItem
     [SerializeField]
     public StatPair[] buffs;
 
+    public EquipmentSlot slot;
+
     public override bool CanUseItem(Entity activator)
     {
-        //TODO: is there any reason for equipment not being able to unequip???
         if (!(activator is Player))
             return false;
 
         Player player = (Player)activator;
         if (player.level < levelRequirement)
+            return false;
+
+        ItemEntry item = new ItemEntry(this, 1);
+        if (player.HaveItem(item) != InventoryErrorCode.Success)
             return false;
 
         return true;
@@ -27,6 +32,7 @@ public class EquipableItem : UsableItem
     {
         if (CanUseItem(activator))
         {
+            Player player = (Player)activator;
 
         }
     }

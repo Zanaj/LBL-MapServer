@@ -33,22 +33,22 @@ public class SelectTargetRequest : Packet
                 switch (targetEntity.type)
                 {
                     case EntityType.Unknown:
-                        maxDistance = Player.TARGET_VIEW_DISTANCE;
+                        maxDistance = PlayerConst.TARGET_VIEW_DISTANCE;
                         break;
                     case EntityType.Interactable:
-                        maxDistance = Player.TARGET_VIEW_DISTANCE;
+                        maxDistance = PlayerConst.TARGET_VIEW_DISTANCE;
                         break;
                     case EntityType.Enemy:
-                        maxDistance = Player.TARGET_VIEW_DISTANCE;
+                        maxDistance = PlayerConst.TARGET_VIEW_DISTANCE;
                         break;
                     case EntityType.Player:
-                        maxDistance = Player.TARGET_VIEW_DISTANCE;
+                        maxDistance = PlayerConst.TARGET_VIEW_DISTANCE;
                         break;
                     case EntityType.NPC:
-                        maxDistance = Player.TARGET_VIEW_DISTANCE;
+                        maxDistance = PlayerConst.TARGET_VIEW_DISTANCE;
                         break;
                     case EntityType.Special:
-                        maxDistance = Player.TARGET_VIEW_DISTANCE;
+                        maxDistance = PlayerConst.TARGET_VIEW_DISTANCE;
                         break;
                     default:
                         break;

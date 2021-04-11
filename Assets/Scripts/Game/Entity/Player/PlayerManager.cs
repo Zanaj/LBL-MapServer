@@ -92,10 +92,9 @@ public class PlayerManager : MonoBehaviour
                 reader = cmd.ExecuteReader();
                 if (reader.Read())
                 {
-                    PlayerDesign design = new PlayerDesign();
-                    design.bodyType = reader.GetInt32("bodyType");
-                    design.referal = reader.GetString("referalPronoun");
-                    design.genativ = reader.GetString("ownershipPronoun");
+                    player.bodyType = reader.GetInt32("bodyType");
+                    player.referal = reader.GetString("referalPronoun");
+                    player.genativ = reader.GetString("ownershipPronoun");
 
                     reader.Dispose();
                     reader.Close();
@@ -103,7 +102,6 @@ public class PlayerManager : MonoBehaviour
 
                     player.stats = stats;
                     player.accountData = newAcc;
-                    player.design = design;
                     onlinePlayers.Add(player);
                     Database.instance.CloseConnection();
 

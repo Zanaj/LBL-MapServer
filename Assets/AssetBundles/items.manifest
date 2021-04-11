@@ -1,0 +1,21 @@
+ManifestFileVersion: 0
+CRC: 406754594
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: c1620b3d40aa56eff4f183ce67b3d50b
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 5a2cfc3f07e611a363921a15529e6b4a
+HashAppended: 0
+ClassTypes:
+- Class: 114
+  Script: {fileID: 11500000, guid: ec824cf58f76f284d99164ae5f736075, type: 3}
+- Class: 115
+  Script: {instanceID: 0}
+- Class: 213
+  Script: {instanceID: 0}
+Assets:
+- Assets/Assets/ScriptableObjects/Items/Consumables/Potions/HealthPotion.asset
+Dependencies:
+- C:/Users/Melon/Documents/My Game/LBL-MapServer/LBL-MapServer/Assets/AssetBundles/icons

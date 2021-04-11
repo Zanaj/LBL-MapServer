@@ -6,12 +6,14 @@ using UnityEngine;
 
 public class InteractionRequest : Packet
 {
+    public string entityGUID;
     public int option;
     public List<string> extraInfo;
     public InteractionRequest() { type = PacketType.InteractionRequest; }
 
     public override void Deserialize(BinaryReader reader)
     {
+        entityGUID = reader.ReadString();
         option = reader.ReadInt32();
         int size = reader.ReadInt32();
 
@@ -31,16 +33,29 @@ public class InteractionRequest : Packet
         int characterID = NetworkManager.instance.connectionToAccountID[msg.connectionId];
         Player requester = PlayerManager.instance.onlinePlayers.Find(x => x.characterID == characterID);
 
-        isAllowed = EntityManager.instance.CanUseInteraction(requester, option, extraInfo);
+        Debug.Log($"{requester == null},{extraInfo == null}");
+
+        InteractionErrorCode errorCode = EntityManager.instance
+            .CanUseInteraction(requester, entityGUID, option, extraInfo);
+
+        isAllowed = errorCode == InteractionErrorCode.Success;
+
+        if (!isAllowed)
+            Debug.Log($"Interaction Error: {errorCode} option: {option}");
 
         InteractionAnswer answer = new InteractionAnswer();
         answer.isAllowed = isAllowed;
-        answer.entityGUID = requester.target.entityGUID;
+
+        if (entityGUID == "NA")
+            answer.entityGUID = requester.target.entityGUID;
+        else
+            answer.entityGUID = entityGUID;
+
         answer.Serialize();
 
         NetworkManager.Send(msg.connectionId, answer);
 
         if (isAllowed)
-            EntityManager.instance.UseInteraction(requester, option, extraInfo);
+            EntityManager.instance.UseInteraction(requester, entityGUID, option, extraInfo);
     }
 }

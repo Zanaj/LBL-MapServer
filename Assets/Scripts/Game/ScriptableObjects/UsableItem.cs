@@ -2,13 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum UsableItemType
-{
-    Consumable,
-    Equipment,
-    Callback,
-}
-
 public abstract class UsableItem : ItemData
 {
     public abstract UsableItemType type { get; }

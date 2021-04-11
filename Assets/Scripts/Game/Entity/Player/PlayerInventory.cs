@@ -6,13 +6,15 @@ using UnityEngine;
 public partial class Player
 {
     public int inventorySize;
+
+    [SerializeField]
     public List<ItemEntry> inventory = new List<ItemEntry>();
 
-    public bool CanAddItems(params ItemEntry[] items)
+    public InventoryErrorCode CanAddItems(params ItemEntry[] items)
     {
         //If we pretend all items are nonstackable then well and theres enough space go ahead.
         if (inventory.Count + items.Length <= inventorySize)
-            return true;
+            return InventoryErrorCode.Success;
 
         for (int i = items.Length - 1; i >= 0; i--)
         {
@@ -36,20 +38,99 @@ public partial class Player
 
             //If theres less space than required then return false
             if (spaceLeftInStacks < item.amount)
-                return false;
+                return InventoryErrorCode.NotEnoughSpace;
         }
 
-        return true;
+        return InventoryErrorCode.Success;
+    }
+
+    public InventoryErrorCode HaveItem(ItemEntry item)
+    {
+        InventoryErrorCode errorCode = InventoryErrorCode.Unknown;
+        if (!inventory.Exists(x => x.data == item.data))
+            return InventoryErrorCode.DoesNotOwnItem;
+
+        ItemEntry inventoryItem = inventory.Find(x => x.data == item.data);
+        if (inventoryItem.amount < item.amount)
+            return InventoryErrorCode.DoesNotHaveEnoughItem;
+
+        if (inventoryItem.amount >= item.amount)
+            return InventoryErrorCode.Success;
+
+        return errorCode;
     }
 
     public void AddItems(params ItemEntry[] items)
     {
-        if (!CanAddItems(items))
+        List<ItemEntry> itemsLeft = items.ToList();
+
+        if (CanAddItems(items) != InventoryErrorCode.Success)
             return;
 
-        foreach (ItemEntry item in items)
+        foreach (ItemEntry item in itemsLeft)
         {
+            float fMax = item.data.maxStack;
+            float fAmn = item.amount;
+
+            int sumOfEmptyStacks = inventory.Sum(x => x.leftFromStack);
+            if (sumOfEmptyStacks > 0)
+            {
+                List<ItemEntry> allHalfStackedItems = inventory.FindAll(x => x.leftFromStack > 0);
+                for (int i = 0; i < allHalfStackedItems.Count; i++)
+                {
+                    ItemEntry notFullystacked = allHalfStackedItems[i];
+                    if (item.amount < notFullystacked.leftFromStack)
+                    {
+                        notFullystacked.amount += item.amount;
+                        continue;
+                    }
+
+                    int leftToStack = notFullystacked.leftFromStack;
+                    notFullystacked.amount += leftToStack;
+                    item.amount -= leftToStack;
+                }
+            }
+
+            int cnt = Mathf.CeilToInt(fAmn / fMax);
             
+            for (int i = 0; i < cnt; i++)
+            {
+                int maxStack = item.data.maxStack;
+                int amount = item.amount;
+
+                int toAdd = amount < maxStack ? amount : maxStack;
+                ItemEntry newItem = new ItemEntry(item.data, toAdd);
+                AddItem(newItem);
+
+                item.amount -= toAdd;
+            }
         }
+
+        //TODO: update player's inventory!
+    }
+
+    public InventoryErrorCode RemoveItem(ItemEntry item, bool ignoreAmount)
+    {
+        //TODO: update so you can write stuff over the stack.
+
+        if (!inventory.Exists(x => x.data == item.data))
+            return InventoryErrorCode.DoesNotOwnItem;
+
+        ItemEntry inventoryItem = inventory.Find(x => x.data == item.data);
+        if (inventoryItem.amount <= item.amount || ignoreAmount)
+            inventoryItem.amount -= item.amount;
+
+        if(inventoryItem.amount <= 0)
+            inventory.Remove(inventoryItem);
+
+        return InventoryErrorCode.Success;
+    }
+
+    private void AddItem(ItemEntry item)
+    {
+        if (item.amount <= 0)
+            return;
+
+        inventory.Add(item);
     }
 }

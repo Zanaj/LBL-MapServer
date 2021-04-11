@@ -2,25 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum EquipmentSlot
-{
-    Helmet,
-    Shoulder,
-    Chest,
-    Hands,
-    Belt,
-    Pants,
-    Boots,
-    Costume,
-    Necklace,
-    LeftRing,
-    RightRight,
-    FirstMainHand,
-    FirstOffhand,
-    SecondaryMainHand,
-    SecondaryOffhand,
-}
-
 public class EquipableItem : UsableItem
 {
     public int levelRequirement;

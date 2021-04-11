@@ -1,37 +1,6 @@
 ﻿using System.IO;
 using Telepathy;
 
-public enum PacketType
-{
-    Unknown,
-
-    WelcomeMessage,
-    RegisterServer,
-    Ping,
-
-    LoginRequest,
-    RegisterRequest,
-    GetCharactersRequest,
-    CharacterCreationRequest,
-    CharacterLoginRequest,
-    GetWorldRequest,
-    PlayerMovementRequest,
-    SelectTargetRequest,
-    InteractionRequest,
-
-    LoginAnswer,
-    RegisterAnswer,
-    GetCharactersAnswer,
-    CharacterCreationAnswer,
-    CharacterLoginAnswer,
-    GetWorldAnswer,
-    EntitySync,
-    SelectTargetAnswer,
-    InteractionAnswer,
-
-    PlayerDisconnected,
-}
-
 /// <summary>
 /// Base class for a packet of data over the network.
 /// 

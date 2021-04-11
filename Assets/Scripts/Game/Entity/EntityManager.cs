@@ -3,12 +3,26 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum InteractionErrorCode
+{
+    Unknown,
+
+    TooFarAway,
+    InteractionReturnedNo,
+    InvalidTarget,
+    EntityNotInteractable,
+    SelectedOptionIsOutOfBound,
+
+    CannotAttackYet,
+
+    Success = 99
+}
+
 public class EntityManager : MonoBehaviour
 {
     public static EntityManager instance;
 
-    public List<Entity> unclaimed = new List<Entity>();
-
+    public List<ItemSpawn> itemSpawns = new List<ItemSpawn>();
     public List<Entity> entities
     {
         get
@@ -17,42 +31,30 @@ public class EntityManager : MonoBehaviour
             _e.AddRange(PlayerManager.instance.onlinePlayers);
             _e.AddRange(EnemyManager.instance.enemies);
             _e.AddRange(NPCManager.instance.NPCS);
-            _e.AddRange(unclaimed);
+            _e.AddRange(itemSpawns);
 
             return _e;
         }
 
     }
 
-    void Awake()
+    private void Awake()
     {
         instance = this;
     }
 
-    private void FixedUpdate()
-    {
-        //List<Entity> checks = entities;
-        //checks.RemoveAll(x => x.type == EntityType.Player);
-        //checks.RemoveAll(x => x.type == EntityType.NPC);
-        //checks.RemoveAll(x => x.type == EntityType.Unknown);
-
-        //for (int i = 0; i < checks.Count; i++)
-        //{
-        //    Entity chk = checks[i];
-        //    TimeSpan span = DateTime.Now - chk.respawnTimer;
-
-        //    if(span.TotalSeconds >= chk.respawnSeconds)
-        //    {
-        //        chk.transform.position = chk.startPosition;
-        //        chk.OnRespawn();
-        //    }
-        //}
-    }
-
     #region UseInteraction
-    public void UseInteraction(Player requester, int opiton, List<string> extraInfo)
+    public void UseInteraction(Player requester, string entityGUID, int opiton, List<string> extraInfo)
     {
-        Entity target = requester.target;
+        Entity target;
+        if (entityGUID == "NA")
+            target = requester.target;
+        else
+            target = EntityManager.instance.entities.Find(x => x.entityGUID == entityGUID);
+
+        if(target == null)
+            return;
+        
         InteractionType type = target.options[opiton];
 
         if (type != InteractionType.Attack)
@@ -93,64 +95,41 @@ public class EntityManager : MonoBehaviour
     #endregion
 
     #region InteractionChecks
-    public bool CanUseInteraction(Player requester, int option, List<string> extraInfo)
+    
+    public InteractionErrorCode CanUseInteraction(Player requester, string entityGUID, int option, List<string> extraInfo)
     {
-        if(requester.target != null)
-        {
-            Entity target = requester.target;
-            if (target.isInteractable)
-            {
-                if(target.options.Length > 0)
-                {
-                    if(option <= target.options.Length)
-                    {
-                        InteractionType type = target.options[option];
-                        switch (type)
-                        {
-                            case InteractionType.Unknown:
-                                return false;
-                            case InteractionType.Attack:
-                                return CanUseAttackAction(requester, option, extraInfo);
-                                
-                            case InteractionType.Examine:
-                                return CanUseGeneralAction(requester, option, extraInfo);
-                                
-                            case InteractionType.Talk:
-                                return CanUseGeneralAction(requester, option, extraInfo);
-                                
-                            case InteractionType.Shop:
-                                return CanUseGeneralAction(requester, option, extraInfo);
-                                
-                            case InteractionType.NpcOption:
-                                return CanUseGeneralAction(requester, option, extraInfo);
-                                
-                            case InteractionType.UseItem:
-                                return CanUseGeneralAction(requester, option, extraInfo);
-                                
-                            case InteractionType.EatItem:
-                                return CanUseGeneralAction(requester, option, extraInfo);
-                                
-                            case InteractionType.EquipItem:
-                                return CanUseGeneralAction(requester, option, extraInfo);
-                                
-                            case InteractionType.DropItem:
-                                return CanUseGeneralAction(requester, option, extraInfo);
-                                
-                            default:
-                                return CanUseGeneralAction(requester, option, extraInfo);
-                                
-                        }
-                    }
-                    else { Debug.Log("Selected option is out of the range of options: " + option + "/" + target.options.Length); return false; }
-                }
-                else { Debug.Log("Target dont have any options"); return false; }
-            }
-            else { Debug.Log("target is not interactable"); return false; }
-        }
-        else { Debug.Log("Requster aint got no target!"); return false; }
-    }
+        if (entityGUID == "NA" && requester.target == null)
+            return InteractionErrorCode.InvalidTarget;
 
-    public bool CanUseAttackAction(Player requester, int option, List<string> extraInfo)
+        Entity target;
+        if (entityGUID == "NA")
+            target = requester.target;
+        else
+            target = EntityManager.instance.entities.Find(x => x.entityGUID == entityGUID);
+
+        if (target == null)
+            return InteractionErrorCode.InvalidTarget;
+
+        if (!target.isInteractable && target.options.Length > 0)
+            return InteractionErrorCode.EntityNotInteractable;
+
+        if (option > target.options.Length-1)
+            return InteractionErrorCode.SelectedOptionIsOutOfBound;
+
+        InteractionType type = target.options[option];
+        switch (type)
+        {
+            case InteractionType.Unknown:
+                return InteractionErrorCode.Unknown;
+            case InteractionType.Attack:
+                return CanUseAttackAction(requester, option, extraInfo);
+            default:
+                return CanUseGeneralAction(requester, target, option, extraInfo);
+
+        }
+    }
+    
+    public InteractionErrorCode CanUseAttackAction(Player requester, int option, List<string> extraInfo)
     {
         string parse = "";
         int attackType = 0;
@@ -174,18 +153,17 @@ public class EntityManager : MonoBehaviour
                 {
                     if (requester.CanAttack())
                     {
-                        return true;
+                        return InteractionErrorCode.Success;
                     }
                     else
                     {
-                        Debug.Log("User cannot attack yet!");
-                        return false;
+                        return InteractionErrorCode.CannotAttackYet;
                     }
                 }
                 else 
                 {
                     Debug.Log("Requester Too far away! Distance: " + dis);
-                    return false;
+                    return InteractionErrorCode.TooFarAway;
                 }
             }
             else
@@ -195,30 +173,31 @@ public class EntityManager : MonoBehaviour
                     //TODO: check for cooldown on normal attack
                     //TODO: check for distance;
                     //TODO: use skill;
-                    return true;
+                    return InteractionErrorCode.Success;
                 }
                 else
                 {
                     Debug.Log("Requested a skill hotkey out of hotkey bar");
-                    return false;
+                    return InteractionErrorCode.SelectedOptionIsOutOfBound;
                 }
             }
         }
         else
         {
             Debug.LogWarning(attackType + " is not a valid type");
-            return false;
+            return InteractionErrorCode.SelectedOptionIsOutOfBound;
         }
     }
 
-    public bool CanUseGeneralAction(Player requester, int option, List<string> extraInfo)
+    public InteractionErrorCode CanUseGeneralAction(Player requester, Entity target, int option, List<string> extraInfo)
     {
         //TODO: Check distance
         Vector3 a = requester.transform.position;
-        Vector3 b = requester.target.transform.position;
+        Vector3 b = target.transform.position;
 
         float dis = Vector3.Distance(a, b);
-        return dis <= NetworkManager.instance.MAX_INTERACTION_DISTANCE;
+        bool isWithinDis = dis <= NetworkManager.instance.MAX_INTERACTION_DISTANCE;
+        return isWithinDis ? InteractionErrorCode.Success : InteractionErrorCode.TooFarAway;
     }
     #endregion
 }

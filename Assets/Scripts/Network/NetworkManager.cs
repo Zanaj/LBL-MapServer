@@ -6,27 +6,6 @@ using Telepathy;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public enum NetworkState
-{
-    NotConnected,
-    Connecting,
-    Connected,
-    NotLoggedIn,
-    StartingUp,
-    Handshake,
-    ProcessingLogin,
-    CharacterScreen,
-    LoggedIn,
-}
-
-public enum ConsoleLevel
-{
-    Minimal,
-    Default,
-    Verbose,
-    Debug,
-}
-
 public class NetworkManager : MonoBehaviour
 {
     [Range(1,100)]
@@ -43,6 +22,7 @@ public class NetworkManager : MonoBehaviour
     public bool isActive;
 
     public static Client client;
+    public bool hasSent = false;
 
     private void Awake()
     {
@@ -64,13 +44,42 @@ public class NetworkManager : MonoBehaviour
     {
         if (client.Connected)
         {
-            RegisterServer register = new RegisterServer();
-            register.port = port;
-            register.Serialize();
-            client.Send(register.buffer);
+            Message msg;
+            if(client.GetNextMessage(out msg))
+            {
+                switch (msg.eventType)
+                {
+                    case Telepathy.EventType.Connected:
+                        RegisterServer register = new RegisterServer();
+                        register.port = port;
+                        register.Serialize();
+                        client.Send(register.buffer);
 
-            client.Disconnect();
-            server.Start(port);
+                        break;
+                    case Telepathy.EventType.Data:
+                        MemoryStream stream;
+                        BinaryReader reader;
+
+                        stream = new MemoryStream(msg.data);
+                        reader = new BinaryReader(stream);
+
+                        PacketType type = (PacketType)reader.ReadInt32();
+                        int id = reader.ReadInt32();
+
+                        if(type == PacketType.RegisterServer)
+                        {
+                            RegisterServer reigster = new RegisterServer();
+                            reigster.Deserialize(reader);
+
+                            reigster.OnRecieve(msg);
+                        }
+                        break;
+                    case Telepathy.EventType.Disconnected:
+                        break;
+                    default:
+                        break;
+                }
+            }
         }
 
         if (server.Active)

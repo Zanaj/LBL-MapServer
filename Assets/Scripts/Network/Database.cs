@@ -8,10 +8,10 @@ public class Database : MonoBehaviour
 {
     public static Database instance;
     public MySqlConnection connection;
-    public static string host = "92.246.1.244";
+    public static string host = "34.70.181.250";
     public static string database = "lbldb";
     public static string uid = "root";
-    public static string password = "root";
+    public static string password = "czu26ueh";
     public string characterSet = "utf8";
 
     //Initialize all the database stuff.

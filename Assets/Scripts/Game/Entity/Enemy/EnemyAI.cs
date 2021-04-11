@@ -299,6 +299,7 @@ public class EnemyAI : MonoBehaviour
 
     private void OnDrawGizmos()
     {
+        #if UNITY_EDITOR
         Gizmos.color = new Color(255, 0, 0, 0.5f);
         Gizmos.DrawSphere(this.transform.position, innerAttackRange);
 
@@ -311,5 +312,6 @@ public class EnemyAI : MonoBehaviour
             pos = enemy.startPosition;
 
         Gizmos.DrawSphere(pos, wanderDistance);
+        #endif
     }
 }

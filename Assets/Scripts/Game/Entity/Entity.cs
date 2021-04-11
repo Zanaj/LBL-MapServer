@@ -4,56 +4,6 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
-public enum EntityType
-{
-    Unknown,
-    Interactable,
-    Enemy,
-    Player,
-    NPC,
-    Special,
-}
-
-public interface IInteractable
-{
-    bool CanInteract(Entity activator, List<string> extraInfo);
-    void InteractWith(Entity activator, List<string> extraInfo);
-}
-
-public enum InteractionType
-{
-    Unknown,
-    Attack,
-    Examine,
-    Talk,
-    Shop,
-    NpcOption,
-    OpenDoor,
-    PickItem,
-    UseItem,
-    EatItem,
-    EquipItem,
-    DropItem,
-}
-
-public enum ConditionType
-{
-    DamageVitalOverTime,
-    ApplyDebuffOverTime,
-    Stat,
-}
-
-public struct Condition
-{
-    public ConditionType type;
-    public Stat conditionedStat;
-    public float amount;
-    public int originType;
-    public int originID;
-
-    public DateTime recievedAt;
-}
-
 public class Entity : EntityStats
 {
     public virtual EntityType type { get; }

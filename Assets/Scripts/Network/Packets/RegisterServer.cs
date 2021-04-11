@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Telepathy;
 using UnityEngine;
 
 public class RegisterServer : Packet
@@ -13,5 +14,11 @@ public class RegisterServer : Packet
         BeginWrite();
         writer.Write(port);
         EndWrite();
+    }
+
+    public override void OnRecieve(Message msg)
+    {
+        NetworkManager.client.Disconnect();
+        NetworkManager.server.Start(NetworkManager.instance.port);
     }
 }

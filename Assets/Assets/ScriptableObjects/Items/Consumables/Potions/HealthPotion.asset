@@ -12,16 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ec824cf58f76f284d99164ae5f736075, type: 3}
   m_Name: HealthPotion
   m_EditorClassIdentifier: 
-  desc: 
-  displayName: 
-  icon: {fileID: 0}
-  maxStack: 0
-  cost: 0
-  cooldownType: 0
-  millisecondsCooldown: 0
-  millisecondsBuffTimer: 0
-  isPerment: 0
+  desc: Something almost seems off with this potion. The smell is awful and a purple
+    liquid is swirling inside.
+  displayName: Potion
+  icon: {fileID: 21300000, guid: 2bfedec7baf826944ae29d180758b018, type: 3}
+  maxStack: 10
+  cost: 100
+  cooldownType: 1
+  millisecondsCooldown: 1000
+  millisecondsBuffTimer: 100000
+  isPerment: 1
   buffs:
-  - stat: 0
-    value: 0
-    isPerminent: 0
+  - stat: 2
+    value: -10
+    isPerminent: 1

@@ -41,6 +41,17 @@ public class GetWorldAnswer : Packet
                 player.MakeEntityPacket(writer);
             }
         }
+
+        int itemSpawn = EntityManager.instance.itemSpawns.Count;
+        writer.Write(itemSpawn);
+        if(itemSpawn > 0)
+        {
+            for (int i = 0; i < itemSpawn; i++)
+            {
+                ItemSpawn curr = EntityManager.instance.itemSpawns[i];
+                curr.MakeEntityPacket(writer);
+            }
+        }
         EndWrite();
     }
 }

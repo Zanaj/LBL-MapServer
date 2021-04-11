@@ -41,7 +41,8 @@ public partial class Player : Entity
 
     public bool hasInitialized;
     public bool[] inputs;
-    public int[] skillBar;
+    public SkillEntry[] skillBar;
+    public SkillEntry[] knownSkills;
     public float health = 0;
 
     public override bool isInteractable => true;

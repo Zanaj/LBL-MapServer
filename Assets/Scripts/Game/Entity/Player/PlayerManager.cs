@@ -100,7 +100,6 @@ public class PlayerManager : MonoBehaviour
                     reader.Close();
                     cmd.Dispose();
 
-                    player.stats = stats;
                     player.accountData = newAcc;
                     onlinePlayers.Add(player);
                     Database.instance.CloseConnection();

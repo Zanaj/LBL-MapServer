@@ -23,7 +23,6 @@ public partial class Player : Entity
     public int level { get { return Mathf.RoundToInt(exp / 100); } }
     public int totalLevel;
 
-    
     public bool hasInitialized;
     
     public override bool isInteractable => true;

@@ -11,10 +11,10 @@ GameObject:
   - component: {fileID: 1249178242808975678}
   - component: {fileID: 3630994575493398377}
   - component: {fileID: 2561393889084693509}
-  - component: {fileID: 3329805211557243774}
   - component: {fileID: 1841078012}
   - component: {fileID: 700572095}
   - component: {fileID: -3806548750097015120}
+  - component: {fileID: 5655398804514954426}
   m_Layer: 8
   m_Name: Player
   m_TagString: Player
@@ -85,41 +85,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &3329805211557243774
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3803608951793874945}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b16835a73209e98409beb9ba4f888c4e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  displayName: 
-  entityGUID: 
-  options: 
-  target: {fileID: 0}
-  respawnSeconds: 0
-  startPosition: {x: 0, y: 0, z: 0}
-  needRespawning: 0
-  stats: {fileID: 0}
-  characterID: 0
-  guildId: 0
-  ap: 0
-  exp: 0
-  totalLevel: 0
-  pendingTargetGUID: 
-  rotation: 0
-  walkingSpeed: 2
-  jumpHeight: 5
-  gravity: -9.81
-  controller: {fileID: 1841078012}
-  hasInitialized: 0
-  inputs: 
-  skillBar: 
-  health: 0
 --- !u!143 &1841078012
 CharacterController:
   m_ObjectHideFlags: 0
@@ -168,3 +133,53 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &5655398804514954426
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3803608951793874945}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b16835a73209e98409beb9ba4f888c4e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  displayName: 
+  entityGUID: 
+  options: 
+  target: {fileID: 0}
+  respawnSeconds: 0
+  startPosition: {x: 0, y: 0, z: 0}
+  needRespawning: 0
+  characterID: 0
+  guildId: 0
+  ap: 0
+  exp: 0
+  totalLevel: 0
+  hasInitialized: 0
+  pendingTargetGUID: 
+  shouldDebug: 1
+  health: 0
+  mana: 0
+  stamina: 0
+  wound: 0
+  exhaustion: 0
+  hunger: 0
+  strength: 0
+  intellegence: 0
+  willpower: 0
+  luck: 0
+  bodyType: 0
+  genativ: 
+  referal: 
+  height: 0
+  weight: 0
+  inventorySize: 0
+  inventory: []
+  rotation: 0
+  walkingSpeed: 5
+  jumpHeight: 5
+  gravity: -9.81
+  controller: {fileID: 1841078012}
+  inputs: 
